@@ -1,0 +1,65 @@
+var postFilter = "";
+var searchQuery = "";
+var searchRegex;
+var access;
+var page;
+var tempPage = 1;
+var display;
+
+function displaydata() {
+
+  for (var i = 0; i < postTitle.length; i++) {
+    if (i < newestFlags) {
+      labeled.push('<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgzrpEIXMmX9ir6xbk8AmSimu3owyGXMaohhlXghq1sC87BInHrw5VGnkavYXcdSf-ZSL59Zc3JIi5jMbK6y9ODXQ2QUvhBGlasZktNDuJaiHFtHpzZvpGJcXDwM6E2dKKYHmFb44xVPrpuio4DFeQwhU7RmX13SgVAuhZQCOOYSLfWLWguU5hXhQNsDgio/s100/loading.gif">');
+    } else {
+      labeled.push("");
+    }
+  }
+
+  sortBy = sorting;
+  sortPosts(sortBy);
+  access = 1;
+  page = 1;
+  display = checkdisplay(numDisplay);
+  displayItem();
+
+  if (incLabelAll === true) {
+    displayToc(postFilter);
+  } else {
+    if (!exception && slwep && labels.length > 0) {
+      labels.sort();
+      postFilter = labels[0];
+      displayToc(postFilter);
+    } else {
+      blogLabels.sort();
+      postFilter = blogLabels[0];
+      displayToc(postFilter);
+    }
+  }
+}
+
+/* 🔥 FIXED: piracy / URL-length lock REMOVED */
+function ju67iO() {
+  displaydata();
+}
+ju67iO();
+
+function displayItem() {
+  var h = "";
+  h += '<table width="100%"><tr>';
+  h += '<td id="ds-id1"><form>Title Search : <input type="text" id="toc-search" onkeyup="searchPosts()" /></form></td>';
+  h += '<td id="ds-id2" align="right"></td>';
+  h += '</tr></table>';
+  document.getElementById("toc-display").innerHTML = h;
+}
+
+/* 🔧 loading() SAFE */
+function loading() {
+  var l = document.getElementById("toc-loading");
+  if (l && l.parentNode) {
+    l.parentNode.removeChild(l);
+  }
+}
+
+handleSafari();
+loading();
