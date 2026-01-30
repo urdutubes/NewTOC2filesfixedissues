@@ -1,0 +1,91 @@
+var blogURL;
+var blogLabels = [];
+var postCount;
+
+var postTitle = [];
+var postURL = [];
+var postDate = [];
+var postDF = [];
+var postUpdate = [];
+var postUDF = [];
+var postSummary = [];
+var postLabels = [];
+var childPostLabels = [];
+var labeled = [];
+
+function in_array(v, a) {
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] === v) return true;
+  }
+  return false;
+}
+
+/* ❌ document.write REMOVED */
+/* ✅ HTML containers MUST exist in page */
+
+function loadtoc(json) {
+
+  if ("category" in json.feed && blogLabels.length < 1) {
+    for (var i = 0; i < json.feed.category.length; i++) {
+      blogLabels.push(json.feed.category[i].term);
+    }
+  }
+
+  if ("entry" in json.feed) {
+    for (var i = 0; i < json.feed.entry.length; i++) {
+
+      var e = json.feed.entry[i];
+      postTitle.push(e.title.$t);
+
+      postDate.push(e.published.$t.substring(0, 10));
+      postUpdate.push(e.updated.$t.substring(0, 10));
+
+      postDF.push(new Date(e.published.$t));
+      postUDF.push(new Date(e.updated.$t));
+
+      for (var k = 0; k < e.link.length; k++) {
+        if (e.link[k].rel === "alternate") {
+          postURL.push(e.link[k].href);
+          break;
+        }
+      }
+
+      var txt = e.summary ? e.summary.$t : "";
+      txt = txt.replace(/\s+/g, " ").trim();
+      if (txt.length > numChars) {
+        txt = txt.substring(0, numChars) + "...";
+      }
+      postSummary.push(txt);
+
+      if (e.category) {
+        for (var c = 0; c < e.category.length; c++) {
+          childPostLabels.push(e.category[c].term);
+        }
+      }
+
+      postLabels.push(childPostLabels);
+      childPostLabels = [];
+    }
+  }
+}
+
+function inittoc(json) {
+
+  for (var i = 0; i < json.feed.link.length; i++) {
+    if (json.feed.link[i].rel === "alternate") {
+      blogURL = json.feed.link[i].href;
+      break;
+    }
+  }
+
+  postCount = parseInt(json.feed.openSearch$totalResults.$t, 10);
+
+  var pages = Math.ceil(postCount / 150);
+
+  for (var i = 0; i < pages; i++) {
+    var start = (i * 150) + 1;
+    var s = document.createElement("script");
+    s.src = blogURL + "feeds/posts/summary?max-results=150&start-index=" + start + "&alt=json-in-script&callback=loadtoc";
+    document.body.appendChild(s);
+  }
+}
